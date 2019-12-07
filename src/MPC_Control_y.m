@@ -20,7 +20,7 @@ classdef MPC_Control_y < MPC_Control
       us = sdpvar(m, 1);
       
       % SET THE HORIZON HERE
-      N = ...
+      N = 10;
       
       % Predicted state and input trajectories
       x = sdpvar(n, N);
@@ -36,8 +36,55 @@ classdef MPC_Control_y < MPC_Control
       % WRITE THE CONSTRAINTS AND OBJECTIVE HERE
       con = [];
       obj = 0;
-
       
+      % extract system matrices
+      A = mpc.A;
+      B = mpc.B;
+       
+      % cost Q,R
+      Q = 10 * eye(n);
+      R = 1;
+      
+      % Constraints
+        % v = M_beta in V = { v | Mv <= m }
+        M = [1;-1]; 
+        m = [0.3; 0.3];
+        % x in X = { x | Fx <= f } -> constraints on alpha
+        F = [0 0 0 0; 0 0 0 0; 0 1 0 0; 0 -1 0 0; 0 0 0 0; 0 0 0 0; 0 0 0 0; 0 0 0 0]; 
+        f = [0; 0; 0.035; 0.035; 0; 0; 0; 0];
+        
+        % Compute LQR controller for unconstrained system
+        [K,Qf,~] = dlqr(A,B,Q,R);
+        % MATLAB defines K as -K, so invert its signal
+        K = -K;
+        
+         % Compute maximal invariant set
+            Xf = polytope([F;M*K],[f;m]);
+            Acl = [A+B*K];
+            while 1
+                prevXf = Xf;
+                [T,t] = double(Xf);
+                preXf = polytope(T*Acl,t);
+                Xf = intersect(Xf, preXf);
+                if isequal(prevXf, Xf)
+                    break
+                end
+            end
+            [Ff,ff] = double(Xf);
+            
+            con = (x(:,2) == A*x(:,1) + B*u(:,1)) + (M*u(:,1) <= m);
+            obj = u(:,1)'*R*u(:,1);
+            for i = 2:N-1
+                con = con + (x(:,i+1) == A*x(:,i) + B*u(:,i));
+                con = con + (F*x(:,i) <= f) + (M*u(:,i) <= m);
+                obj = obj + x(:,i)'*Q*x(:,i) + u(:,i)'*R*u(:,i);
+            end
+            con = con + (Ff*x(:,N) <= ff);
+            obj = obj + x(:,N)'*Qf*x(:,N);
+            
+            
+            
+
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
