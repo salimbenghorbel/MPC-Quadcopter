@@ -50,8 +50,8 @@ classdef MPC_Control_y < MPC_Control
         M = [1;-1]; 
         m = [0.3; 0.3];
         % x in X = { x | Fx <= f } -> constraints on alpha
-        F = [0 0 0 0; 0 0 0 0; 0 1 0 0; 0 -1 0 0; 0 0 0 0; 0 0 0 0; 0 0 0 0; 0 0 0 0]; 
-        f = [0; 0; 0.035; 0.035; 0; 0; 0; 0];
+        F = [0 1 0 0; 0 -1 0 0]; 
+        f = [0.035; 0.035];
         
         % Compute LQR controller for unconstrained system
         [K,Qf,~] = dlqr(A,B,Q,R);
@@ -119,7 +119,22 @@ classdef MPC_Control_y < MPC_Control
       con = [];
       obj = 0;
       
-      
+      % extract system matrices
+            A = mpc.A;
+            B = mpc.B;
+            C = mpc.C;
+            
+            % Constraints
+            %  us in V = { us | Mus <= m }
+            M = [1;-1]; 
+            m = [0.3; 0.3];
+            % xs in X = { xs | Fxs <= f } -> constraints on beta
+            F = [0 1 0 0; 0 -1 0 0]; 
+            f = [0.035; 0.035];
+            
+            
+            con = (xs == A*xs + B*us) + (M*us <= m) + (F*xs <= f);
+            obj = (C*xs-ref)'*(C*xs-ref) + us'*us;
       % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE 
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       

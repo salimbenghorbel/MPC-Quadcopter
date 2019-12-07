@@ -33,6 +33,14 @@ classdef MPC_Control_x < MPC_Control
             % NOTE: The matrices mpc.A, mpc.B, mpc.C and mpc.D are
             %       the DISCRETE-TIME MODEL of your system
             
+            % SET THE HORIZON HERE
+            N = 10;
+            
+            % Predicted state and input trajectories
+            x = sdpvar(n, N);
+            u = sdpvar(m, N-1);
+            
+            
             % WRITE THE CONSTRAINTS AND OBJECTIVE HERE
             con = []; 
             obj = 0;
@@ -50,8 +58,8 @@ classdef MPC_Control_x < MPC_Control
             M = [1;-1]; 
             m = [0.3; 0.3];
             % x in X = { x | Fx <= f } -> constraints on beta
-            F = [0 0 0 0; 0 0 0 0; 0 1 0 0; 0 -1 0 0; 0 0 0 0; 0 0 0 0; 0 0 0 0; 0 0 0 0]; 
-            f = [0; 0; 0.035; 0.035; 0; 0; 0; 0];
+            F = [0 1 0 0; 0 -1 0 0]; 
+            f = [0.035; 0.035];
             
             % Compute LQR controller for unconstrained system
             [K,Qf,~] = dlqr(A,B,Q,R);
@@ -78,10 +86,10 @@ classdef MPC_Control_x < MPC_Control
             for i = 2:N-1
                 con = con + (x(:,i+1) == A*x(:,i) + B*u(:,i));
                 con = con + (F*x(:,i) <= f) + (M*u(:,i) <= m);
-                obj = obj + x(:,i)'*Q*x(:,i) + u(:,i)'*R*u(:,i);
+                obj = obj + (x(:,i)-xs)'*Q*(x(:,i)-xs) + (u(:,i)'-us)*R*(u(:,i)-us);
             end
             con = con + (Ff*x(:,N) <= ff);
-            obj = obj + x(:,N)'*Qf*x(:,N);
+            obj = obj + (x(:,N)-xs)'*Qf*(x(:,N)-xs);
             
             
             
@@ -119,7 +127,23 @@ classdef MPC_Control_x < MPC_Control
             con = [];
             obj = 0;
             
+            % extract system matrices
+            A = mpc.A;
+            B = mpc.B;
+            C = mpc.C;
             
+            % Constraints
+            %  us in V = { us | Mus <= m }
+            M = [1;-1]; 
+            m = [0.3; 0.3];
+            % xs in X = { xs | Fxs <= f } -> constraints on beta
+            F = [0 1 0 0; 0 -1 0 0]; 
+            f = [0.035; 0.035];
+            
+            
+            con = (xs == A*xs + B*us) + (M*us <= m) + (F*xs <= f);
+            obj = (C*xs-ref)'*(C*xs-ref) + us'*us;
+           
             % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             

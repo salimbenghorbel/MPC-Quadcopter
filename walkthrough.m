@@ -44,6 +44,13 @@ sys = quad.linearize(xs,us);
 % Design MPC controller
 mpc_x = MPC_Control_x(sys_x, Ts);
 % Get control inputs with
-x = [0;0;0;0];
-x_position_reference = [0;0;0;0];
-ux = mpc_x.get_u(x, x_position_reference);
+x = [0;0.035;0;0];
+x_position_reference = 0.035;
+ux = mpc_x.get_u(x,x_position_reference);
+%%
+mpc_x = MPC_Control_x(sys_x, Ts);
+mpc_y = MPC_Control_y(sys_y, Ts);
+mpc_z = MPC_Control_z(sys_z, Ts);
+mpc_yaw = MPC_Control_yaw(sys_yaw, Ts);
+sim = quad.sim(mpc_x, mpc_y, mpc_z, mpc_yaw); 
+quad.plot(sim);
