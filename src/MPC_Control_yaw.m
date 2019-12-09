@@ -20,7 +20,7 @@ classdef MPC_Control_yaw < MPC_Control
             us = sdpvar(m, 1);
             
             % SET THE HORIZON HERE
-            N = 10;
+            N = 50;
             
             % Predicted state and input trajectories
             x = sdpvar(n, N);
@@ -77,10 +77,10 @@ classdef MPC_Control_yaw < MPC_Control
             for i = 2:N-1
                 con = con + (x(:,i+1) == A*x(:,i) + B*u(:,i));
                 con = con + (M*u(:,i) <= m);
-                obj = obj + x(:,i)'*Q*x(:,i) + u(:,i)'*R*u(:,i);
+                obj = obj + (x(:,i)-xs)'*Q*(x(:,i)-xs) + (u(:,i)'-us)*R*(u(:,i)-us);
             end
             con = con + (Ff*x(:,N) <= ff);
-            obj = obj + x(:,N)'*Qf*x(:,N);
+            obj = obj + (x(:,N)-xs)'*Qf*(x(:,N)-xs);
             
             % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

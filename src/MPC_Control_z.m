@@ -37,7 +37,7 @@ classdef MPC_Control_z < MPC_Control
             d_est = sdpvar(1);
             
             % SET THE HORIZON HERE
-            N = 10;
+            N = 50;
             
             % Predicted state and input trajectories
             x = sdpvar(n, N);
@@ -95,10 +95,9 @@ classdef MPC_Control_z < MPC_Control
             for i = 2:N-1
                 con = con + (x(:,i+1) == A*x(:,i) + B*u(:,i) + disturbance *(B*d_est) );
                 con = con + (M*u(:,i) <= m);
-                obj = obj + x(:,i)'*Q*x(:,i) + u(:,i)'*R*u(:,i) ;
+                obj = obj + (x(:,i)-xs)'*Q*(x(:,i)-xs) + (u(:,i)'-us)*R*(u(:,i)-us);
             end
-            con = con + (Ff*x(:,N) <= ff);
-            obj = obj + x(:,N)'*Qf*x(:,N);
+            obj = obj + (x(:,N)-xs)'*Qf*(x(:,N)-xs);
             
             
             % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE
@@ -181,13 +180,13 @@ classdef MPC_Control_z < MPC_Control
             C_bar = [];
             L = [];
             
-            %             p   = size(mpc.C,1);
-            %             [n,m] = size(mpc.B);
-            %             A_bar = [mpc.A, zeros(n,1); zeros(1,n),1];
-            %             B_bar = [mpc.B;zeros(1,m)];
-            %             C_bar = [mpc.C,ones(p,1)];
-            %
-            %             L = -place(A_bar',C_bar',0.5*ones(1,size(A_bar',1)))';
+%                         p   = size(mpc.C,1);
+%                         [n,m] = size(mpc.B);
+%                         A_bar = [mpc.A, zeros(n,1); zeros(1,n),1];
+%                         B_bar = [mpc.B;zeros(1,m)];
+%                         C_bar = [mpc.C,ones(p,1)];
+%             
+%                         L = -place(A_bar',C_bar',[0.3 1 0.905])';
             
             % YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE YOUR CODE HERE
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

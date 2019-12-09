@@ -20,7 +20,7 @@ classdef MPC_Control_x < MPC_Control
             us = sdpvar(m, 1);
             
             % SET THE HORIZON HERE
-            N = 10;
+            N = 50;
             
             % Predicted state and input trajectories
             x = sdpvar(n, N);
@@ -34,7 +34,7 @@ classdef MPC_Control_x < MPC_Control
             %       the DISCRETE-TIME MODEL of your system
             
             % SET THE HORIZON HERE
-            N = 10;
+            N = 50;
             
             % Predicted state and input trajectories
             x = sdpvar(n, N);
@@ -57,10 +57,10 @@ classdef MPC_Control_x < MPC_Control
             % v = M_beta in V = { v | Mv <= m }
             M = [1;-1]; 
             m = [0.3; 0.3];
+            
             % x in X = { x | Fx <= f } -> constraints on beta
             F = [0 1 0 0; 0 -1 0 0]; 
             f = [0.035; 0.035];
-            
             % Compute LQR controller for unconstrained system
             [K,Qf,~] = dlqr(A,B,Q,R);
             % MATLAB defines K as -K, so invert its signal
