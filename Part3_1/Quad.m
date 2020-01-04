@@ -349,6 +349,44 @@ classdef Quad
       end
     end
     
+    %% added by user
+    
+    function ctrl = merge_controllers_no_ref(quad, ctrl_x, ctrl_y, ctrl_z, ctrl_yaw)
+      
+      % Get the state indices
+      [sys_x, sys_y, sys_z, sys_yaw] = quad.decompose();
+      
+      xI = sys_x.UserData.states;
+      xT = sys_x.UserData.T;
+      
+      yI = sys_y.UserData.states;
+      yT = sys_y.UserData.T;
+      
+      zI = sys_z.UserData.states;
+      zT = sys_z.UserData.T;
+      
+      yawI = sys_yaw.UserData.states;
+      yawT = sys_yaw.UserData.T;
+      
+      if ~isempty(ctrl_z.L) % Provide offset-free information in z
+        fprintf('===> Detected offset-free z-controller\n');
+        ctrl = @(x, ref, z_hat) quad.us + ...
+          xT'*ctrl_x.get_u(x(xI), ref(1)) + ...
+          yT'*ctrl_y.get_u(x(yI), ref(2)) + ...
+          zT'*ctrl_z.get_u(z_hat, ref(3)) + ...
+          yawT'*ctrl_yaw.get_u(x(yawI), ref(4));
+      else % Not offset free
+        fprintf('===> z-controller is not offset free\n');
+        ctrl = @(x) quad.us + ...
+          xT'*ctrl_x.get_u(x(xI)) + ...
+          yT'*ctrl_y.get_u(x(yI)) + ...
+          zT'*ctrl_z.get_u([x(zI);0]) + ...
+          yawT'*ctrl_yaw.get_u(x(yawI));
+      end
+    end
+    
+    %%
+    
     %
     % Compute upper / lower bounds on the inputs of each sub-system
     %
