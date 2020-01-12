@@ -114,7 +114,6 @@ for k=1:nb_comb
     A_lqr = A+B*K;
     sys_lqr = ss(A_lqr,B,C,D,Ts);
     settling_time(k) = stepinfo(sys_lqr).SettlingTime;
-    settling(k) = stepinfo(sys_lqr).SettlingMax;
 end
 
 
