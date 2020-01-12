@@ -57,7 +57,7 @@ sim = struct();
 sim.x = time';
 sim.y = states;
 figure
-quad.plot(sim,us);
+quad.plot(sim,[u,u(:,end)]);
 
 %% Start at x,y,z = 2
 Tf = 10;
@@ -82,4 +82,4 @@ sim = struct();
 sim.x = time';
 sim.y = states;
 figure
-quad.plot(sim,us);
+quad.plot(sim,[u,u(:,end)]);

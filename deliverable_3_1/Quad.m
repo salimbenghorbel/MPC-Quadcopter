@@ -423,11 +423,15 @@ classdef Quad
         % This is the plot of ode45 - convert it
         sim.t = sim.x;
         sim.x = sim.y;
-        
         for i = 1:length(sim.t)
           [s(i).omega, s(i).theta, s(i).vel, s(i).pos] = quad.parse_state(sim.x(:,i));
           s(i).t = sim.t(i);
-          s(i).u = Nplots;
+          if min(size(Nplots)) <= 1
+            s(i).u = Nplots;
+          else
+              s(i).u = Nplots(:,i);
+          end
+          
           s(i).x = sim.x(:,i);
         end
         sim = s;
