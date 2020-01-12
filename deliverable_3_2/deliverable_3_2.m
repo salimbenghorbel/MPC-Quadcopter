@@ -25,7 +25,7 @@ I_y = [ind.omega(1) ind.theta(1) ind.vel(2) ind.pos(2)];
 I_z = [ind.vel(3) ind.pos(3)];
 I_yaw = [ind.omega(3) ind.theta(3)];
 
-%%
+%% perform control action and simulate
 Tf = 10;
 nbSteps = ceil(Tf/Ts);
 x0 = zeros(12,1); % Initial state
@@ -47,10 +47,10 @@ end
 time = (0:nbSteps-1)*Ts;
 settling_time = time(find(vecnorm(states([10,11,12,6],:)-ref,2,1)>0.05*vecnorm(x0([10,11,12,6])-ref),1,'last'))
 
-%% plot
+%% plot simulation
 sim = struct();
 sim.x = time';
 sim.y = states;
-quad.plot(sim,us);
+quad.plot(sim,[u,u(:,end)]);
 
 
