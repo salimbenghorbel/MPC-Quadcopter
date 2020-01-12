@@ -102,6 +102,12 @@ classdef MPC_Control_z < MPC_Control
             
             ctrl_opt = optimizer(con, obj, sdpsettings('solver','gurobi'), ...
                 {x(:,1), xs, us, d_est}, u(:,1));
+            
+            figure;
+            Xf.projection(1:2).plot();
+            xlabel('x1: velocity z');
+            ylabel('x2: z');
+            title('Terminal invariant set for z system ');
         end
         
         

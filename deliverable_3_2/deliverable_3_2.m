@@ -33,7 +33,7 @@ x0 = zeros(12,1); % Initial state
 %x0(I_yaw) = [0,45*pi/180];
 
 ref = zeros(4,1); % Reference state
-ref(1:3) = 2;
+ref(1:3) = -2;
 ref(4) = 45*pi/180;
 
 v = zeros(4,nbSteps-1);

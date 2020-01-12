@@ -1,4 +1,8 @@
 %%
+clc
+clear all
+close all
+%%
 Ts = 1/5;
 quad = Quad(Ts);
 [xs, us] = quad.trim();

@@ -1,4 +1,4 @@
-classdef MPC_Control_x < MPC_Control
+classdef MPC_Control_y < MPC_Control
     
     methods
         % Design a YALMIP optimizer object that takes a steady-state state
@@ -91,6 +91,23 @@ classdef MPC_Control_x < MPC_Control
             
             ctrl_opt = optimizer(con, obj, sdpsettings('solver','gurobi'), ...
                 {x(:,1), xs, us}, u(:,1));
+            
+            figure;
+            subplot(2,2,1);
+            Xf.projection(1:2).plot();
+            xlabel('x1: velocity roll');
+            ylabel('x2: roll');
+            grid on;
+            subplot(2,2,2);
+            Xf.projection(2:3).plot();
+            xlabel('x2: roll');
+            ylabel('x3: velocity y');
+            grid on;
+            subplot(2,2,3);
+            Xf.projection(3:4).plot();
+            xlabel('x3: velocity y');
+            ylabel('x4: y');
+            sgtitle('Terminal invariant set for y system');
         end
         
         

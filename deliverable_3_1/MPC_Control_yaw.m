@@ -88,6 +88,11 @@ classdef MPC_Control_yaw < MPC_Control
             
             ctrl_opt = optimizer(con, obj, sdpsettings('solver','gurobi'), ...
                 {x(:,1), xs, us}, u(:,1));
+            figure;
+            Xf.projection(1:2).plot();
+            xlabel('x1: velocity yaw');
+            ylabel('x2: yaw');
+            title('Terminal invariant set for yaw system');
         end
         
         
@@ -123,6 +128,8 @@ classdef MPC_Control_yaw < MPC_Control
             
             % Compute the steady-state target
             target_opt = optimizer(con, obj, sdpsettings('solver', 'gurobi'), ref, {xs, us});
+            
+            
             
         end
     end
