@@ -27,29 +27,7 @@ Us = opti.variable(4, 1); % steady-state input
 
 %% perform control action
 
-% opti.minimize(...
-%     1000*(Xs(10)-REF(1))'*(Xs(10)-REF(1))  + ... % min x-xref tracking
-%     1000*(Xs(11)-REF(2))'*(Xs(11)-REF(2))  + ... % min y-yref tracking
-%     1000*(Xs(12)-REF(3))'*(Xs(12)-REF(3))  + ... % min z-zref tracking
-%     1000*(Xs(6)-REF(4))'*(Xs(6)-REF(4))  + ... % min yaw-yawref tracking
-%     100*(X(1,:)-Xs(1))*(X(1,:)-Xs(1))'  + ... % min x-xs tracking
-%     100*(X(2,:)-Xs(2))*(X(2,:)-Xs(2))'  + ... % min x-xs tracking
-%     100*(X(3,:)-Xs(3))*(X(3,:)-Xs(3))'  + ... % min x-xs tracking
-%     100*(X(4,:)-Xs(4))*(X(4,:)-Xs(4))'  + ... % min x-xs tracking
-%     100*(X(5,:)-Xs(5))*(X(5,:)-Xs(5))'  + ... % min x-xs tracking
-%     100*(X(6,:)-Xs(6))*(X(6,:)-Xs(6))'  + ... % min x-xs tracking
-%     100*(X(7,:)-Xs(7))*(X(7,:)-Xs(7))'  + ... % min x-xs tracking
-%     100*(X(8,:)-Xs(8))*(X(8,:)-Xs(8))'  + ... % min x-xs tracking
-%     100*(X(9,:)-Xs(9))*(X(9,:)-Xs(9))'  + ... % min x-xs tracking
-%     100*(X(10,:)-Xs(10))*(X(10,:)-Xs(10,:))'  + ... % min x-xs tracking
-%     100*(X(11,:)-Xs(11))*(X(11,:)-Xs(11,:))'  + ... % min x-xs tracking
-%     100*(X(12,:)-Xs(12))*(X(12,:)-Xs(12,:))'  + ... % min x-xs tracking
-%     1000*(U(1,:)-Us(1))*(U(1)-Us(1))'   + ... % Minimize input
-%     1000*(U(2,:)-Us(2))*(U(2)-Us(2))'   + ... % Minimize input
-%     1000*(U(3,:)-Us(3))*(U(3)-Us(3))'   + ... % Minimize input
-%     1000*(U(4,:)-Us(4))*(U(4)-Us(4))'   );    % Minimize input
-
-gain_xs_ref = 5000;
+gain_xs_ref = 1000;
 gain_x_xs = 1;
 gain_u_us = 1;
 
