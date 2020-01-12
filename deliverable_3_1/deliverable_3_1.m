@@ -34,28 +34,52 @@ I_y = [ind.omega(1) ind.theta(1) ind.vel(2) ind.pos(2)];
 I_z = [ind.vel(3) ind.pos(3)];
 I_yaw = [ind.omega(3) ind.theta(3)];
 
-%%
+%% Start at 45 yaw
 Tf = 10;
 nbSteps = ceil(Tf/Ts);
 x0 = zeros(12,1); % Initial state
-%x0(10:12) = 2;
 x0(I_yaw) = [0,45*pi/180];
 xend = zeros(size(x0));
 v = zeros(4,nbSteps-1);
 u = zeros(4,nbSteps-1);
 states = zeros(12,nbSteps);
 states(:,1) = x0;
+% create simulation with control action 
 for i=1:nbSteps-1
     u(:,i)  = ctrl(states(:,i));
     states(:,i+1) = quad.step(states(:,i), u(:,i), Ts);
 end
 time = (0:nbSteps-1)*Ts;
-settling_time = time(find(vecnorm(states,2,1)>0.05*vecnorm(x0),1,'last'))
+settling_time_yaw = time(find(vecnorm(states,2,1)>0.05*vecnorm(x0),1,'last'))
 
-%% plot
+%% plot simulation 45 yaw
 sim = struct();
 sim.x = time';
 sim.y = states;
+figure
 quad.plot(sim,us);
 
+%% Start at x,y,z = 2
+Tf = 10;
+nbSteps = ceil(Tf/Ts);
+x0 = zeros(12,1); % Initial state
+x0(10:12) = 2;
+xend = zeros(size(x0));
+v = zeros(4,nbSteps-1);
+u = zeros(4,nbSteps-1);
+states = zeros(12,nbSteps);
+states(:,1) = x0;
+% create simulation with control action 
+for i=1:nbSteps-1
+    u(:,i)  = ctrl(states(:,i));
+    states(:,i+1) = quad.step(states(:,i), u(:,i), Ts);
+end
+time = (0:nbSteps-1)*Ts;
+settling_time_xyz = time(find(vecnorm(states,2,1)>0.05*vecnorm(x0),1,'last'))
 
+%% plot simulation x,y,z = 2
+sim = struct();
+sim.x = time';
+sim.y = states;
+figure
+quad.plot(sim,us);
